@@ -3,12 +3,16 @@ export default class HashUrlProvider {
     this.window = win || window;
   }
 
-  watch(callback) {
-    callback(this.window.location.hash.replace('#', ''));
-    this.window.addEventListener('hashchange', () => callback(this.window.location.hash.replace('#', '')));
+  get() {
+    return (this.window.location.hash || '').substring(1);
   }
 
-  navigate(url) {
+  set(url) {
     this.window.location.hash = `#${url}`;
+  }
+
+  observe(callback) {
+    callback(this.get());
+    this.window.addEventListener('hashchange', () => callback(this.get()));
   }
 }
