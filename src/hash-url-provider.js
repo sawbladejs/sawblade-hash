@@ -1,6 +1,8 @@
 export default class HashUrlProvider {
   constructor(win) {
     this.window = win || window;
+    const { location } = this.window;
+    location.hash = location.hash || '#/';
   }
 
   get() {

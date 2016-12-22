@@ -14,63 +14,82 @@ describe('HashUrlProvider', () => {
     fn();
   }
 
-  let hashUrl;
-
-  beforeEach(() => hashUrl = new HashUrlProvider(win));
-
   afterEach(() => {
     win.addEventListener.reset();
     delete win.location.hash;
   });
 
-  describe('get', () => {
-    const hash = '/aa/bb/cc';
+  describe('when the location hash is initially set to a value', () => {
+    const hash = '#/xx';
 
-    beforeEach(() => win.location.hash = `#${hash}`);
+    beforeEach(() => {
+      win.location.hash = hash;
+      new HashUrlProvider(win);
+    });
 
-    it('should return the location hash', () => {
-      expect(hashUrl.get()).to.equal(hash);
+    it('should not change the initial location hash', () => {
+      expect(win.location.hash).to.equal(hash);
     });
   });
 
-  describe('set', () => {
-    describe('when called with /x/y/z', () => {
-      const newUrl = '/x/y/z';
+  describe('when the location hash is initially not set to a value', () => {
+    let hashUrl;
 
-      beforeEach(() => hashUrl.set(newUrl));
+    beforeEach(() => hashUrl = new HashUrlProvider(win));
 
-      it('should update the location hash to /x/y/z', () => {
-        expect(win.location.hash).to.equal(`#${newUrl}`);
+    it('should initialize the location hash to #/', () => {
+      expect(win.location.hash).to.equal('#/');
+    });
+
+    describe('get', () => {
+      const hash = '/aa/bb/cc';
+
+      beforeEach(() => win.location.hash = `#${hash}`);
+
+      it('should return the location hash', () => {
+        expect(hashUrl.get()).to.equal(hash);
       });
     });
-  });
 
-  describe('observe', () => {
-    describe('when invoked with a callback', () => {
-      const callback = spy();
-      const hash = '/';
+    describe('set', () => {
+      describe('when called with /x/y/z', () => {
+        const newUrl = '/x/y/z';
 
-      beforeEach(() => {
-        win.location.hash = `#${hash}`;
-        hashUrl.observe(callback);
+        beforeEach(() => hashUrl.set(newUrl));
+
+        it('should update the location hash to /x/y/z', () => {
+          expect(win.location.hash).to.equal(`#${newUrl}`);
+        });
       });
+    });
 
-      afterEach(() => callback.reset());
-
-      it('should invoke the callback with the current hash', () => {
-        expect(callback).to.have.been.calledWith(hash);
-      });
-
-      describe('and then the hash changes', () => {
-        const hash = '/a/b/c';
+    describe('observe', () => {
+      describe('when invoked with a callback', () => {
+        const callback = spy();
+        const hash = '/';
 
         beforeEach(() => {
           win.location.hash = `#${hash}`;
-          invokeHashchangeListener();
+          hashUrl.observe(callback);
         });
 
-        it('should invoke the callback with the updated hash', () => {
+        afterEach(() => callback.reset());
+
+        it('should invoke the callback with the current hash', () => {
           expect(callback).to.have.been.calledWith(hash);
+        });
+
+        describe('and then the hash changes', () => {
+          const hash = '/a/b/c';
+
+          beforeEach(() => {
+            win.location.hash = `#${hash}`;
+            invokeHashchangeListener();
+          });
+
+          it('should invoke the callback with the updated hash', () => {
+            expect(callback).to.have.been.calledWith(hash);
+          });
         });
       });
     });
