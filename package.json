@@ -1,6 +1,6 @@
 {
   "name": "sawblade-hash",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Hash-based URL provider for sawblade routing library",
   "repository": {
     "type": "git",
@@ -8,12 +8,13 @@
   },
   "license": "MIT",
   "main": "index.js",
+  "files": ["index.js"],
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha --require ./test.bootstrap.js --compilers js:babel-core/register \"src/**/*.spec.js\"",
+    "test": "./node_modules/.bin/mocha --require ./test.bootstrap.js --compilers js:babel-core/register \"src/**/*.spec.js\"",
     "prepublish": "./node_modules/.bin/webpack"
   },
   "peerDependencies": {
-    "sawblade": "^6.0.1"
+    "sawblade": "^7.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
