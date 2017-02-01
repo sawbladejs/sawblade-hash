@@ -15,6 +15,8 @@ export default class HashUrlProvider {
 
   observe(callback) {
     callback(this.get());
-    this.window.addEventListener('hashchange', () => callback(this.get()));
+    const listener = () => callback(this.get());
+    this.window.addEventListener('hashchange', listener);
+    return () => this.window.removeEventListener('hashchange', listener);
   }
 }

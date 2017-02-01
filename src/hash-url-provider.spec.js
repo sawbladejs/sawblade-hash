@@ -5,17 +5,26 @@ import HashUrlProvider from './hash-url-provider';
 describe('HashUrlProvider', () => {
   const win = {
     addEventListener: spy(),
+    removeEventListener: spy(),
     location: {}
   };
 
   function invokeHashchangeListener() {
     const spy = win.addEventListener;
     const fn = spy.called && spy.getCall(0).args[0] === 'hashchange' ? spy.getCall(0).args[1] : function() {};
+    const removeSpy = win.removeEventListener;
+    if (removeSpy.called) {
+      const [eventName, listener] = removeSpy.getCall(0).args;
+      if (eventName === 'hashchange' && listener === fn) {
+        return;
+      }
+    }
     fn();
   }
 
   afterEach(() => {
     win.addEventListener.reset();
+    win.removeEventListener.reset();
     delete win.location.hash;
   });
 
@@ -67,10 +76,11 @@ describe('HashUrlProvider', () => {
       describe('when invoked with a callback', () => {
         const callback = spy();
         const hash = '/';
+        let unsubscribe;
 
         beforeEach(() => {
           win.location.hash = `#${hash}`;
-          hashUrl.observe(callback);
+          unsubscribe = hashUrl.observe(callback);
         });
 
         afterEach(() => callback.reset());
@@ -89,6 +99,21 @@ describe('HashUrlProvider', () => {
 
           it('should invoke the callback with the updated hash', () => {
             expect(callback).to.have.been.calledWith(hash);
+          });
+
+          describe('and then the subscription is canceled', () => {
+            beforeEach(() => unsubscribe());
+
+            describe('and then the hash changes', () => {
+              beforeEach(() => {
+                callback.reset();
+                invokeHashchangeListener();
+              });
+
+              it('should not invoke the callback', () => {
+                expect(callback).not.to.have.been.called;
+              });
+            });
           });
         });
       });
