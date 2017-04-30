@@ -1,6 +1,6 @@
 {
   "name": "sawblade-hash",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Hash-based URL provider for sawblade routing library",
   "repository": {
     "type": "git",
