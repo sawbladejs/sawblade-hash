@@ -16,5 +16,6 @@ module.exports = {
     path: __dirname,
     filename: 'index.js',
     libraryTarget: 'umd'
-  }
+  },
+  externals: ['rxjs/Rx']
 };
