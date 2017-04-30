@@ -1,2 +1,4 @@
-import HashUrlProvider from './hash-url-provider';
-export default HashUrlProvider;
+import navigate from './navigate';
+import url from './url';
+
+export { navigate, url };
